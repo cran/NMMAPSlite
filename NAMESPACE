@@ -1,0 +1,8 @@
+export(
+       "initDB",
+       "readCity",
+       "listCities",
+       "getMetaData"
+       )
+
+

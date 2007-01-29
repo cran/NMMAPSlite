@@ -1,0 +1,14 @@
+citHeader("The current reference for the", sQuote("NMMAPSdata"), "package:")
+
+citEntry(entry = "article",
+         title = "The {NMMAPSdata} Package",
+         author = personList(person("Roger", "Peng", "D."), person("Leah", "Welty", "J.")),
+	 journal = "R News",
+         year = "2004",
+	 volume = "4",
+         number = "2",
+         pages = "10--14",
+	 url = "http://CRAN.R-project.org/doc/Rnews/",
+         textVersion = paste("Peng RD, Welty LJ (2004).", dQuote("The NMMAPSdata Package,"), "R News, 4 (2), 10--14.")
+         )
+
