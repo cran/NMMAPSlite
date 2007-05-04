@@ -1,9 +1,25 @@
 ## Convert NMMAPSdata 'metpoll' data to NMMAPSlite
 
 library(stashR)
-library(NMMAPSdata)
 
-vnames <- c("city", "date", "dow", "tmpd", "tmax", "tmin", "tmean",
+datadir <- path.expand("~/data/masterIHAPSS/NMMAPSdata")
+
+cities <- c("akr", "albu", "anch", "arlv", "atla", "aust", "bake", "balt",
+            "batr", "bidd", "birm", "bost", "buff", "cayc", "cdrp", "char",
+            "chic", "cinc", "clev", "clmg", "clmo", "colo", "corp", "covt",
+            "dayt", "dc", "denv", "desm", "det", "dlft", "elpa", "evan",
+            "fres", "ftwa", "gdrp", "grnb", "hono", "hous", "hunt", "indi",
+            "jcks", "jckv", "jers", "john", "kan", "kans", "king", "knox",
+            "la", "lafy", "lasv", "lex", "linc", "lkch", "loui", "ltrk",
+            "lubb", "madi", "memp", "miam", "milw", "minn", "mobi", "mode",
+            "musk", "nash", "new", "no", "nor", "nwk", "ny", "oakl", "okla",
+            "olym", "oma", "orla", "phil", "phoe", "pitt", "port", "prov",
+            "ral", "rich", "rive", "roch", "sacr", "salt", "sana", "sanb",
+            "sand", "sanf", "sanj", "seat", "shr", "spok", "staa", "stlo",
+            "stoc", "stpe", "syra", "taco", "tamp", "tole", "tope", "tucs",
+            "tuls", "wich", "wor")
+
+enames <- c("city", "date", "dow", "tmpd", "tmax", "tmin", "tmean",
             "dptp", "rhum", "mxrh", "mnrh", "pm10mean", "pm10n",
             "pm10median", "pm10max1", "pm10max2", "pm10max3",
             "pm10max4", "pm10max5", "pm10trend", "pm10mtrend",
@@ -43,16 +59,73 @@ vnames <- c("city", "date", "dow", "tmpd", "tmax", "tmin", "tmean",
             "l1so2tmean", "l1o3tmean", "l2pm10tmean", "l2pm25tmean",
             "l2cotmean", "l2no2tmean", "l2so2tmean", "l2o3tmean")
 
-db <- new("localDB", dir = "exposure", name = "exposure")
+onames <- c("accident", "copd", "cvd", "death", "inf", "pneinf", "pneu",
+            "resp", "markaccident", "markcopd", "markcvd", "markdeath",
+            "markinf", "markpneinf", "markpneu", "markresp", "date",
+            "agecat")
+intnames <- c("accident", "copd", "cvd", "death", "inf", "pneinf", "pneu",
+            "resp", "markaccident", "markcopd", "markcvd", "markdeath",
+            "markinf", "markpneinf", "markpneu", "markresp")
 
-cities <- listDBCities()
+## colClasses
+cl <- local({
+        d <- read.csv(file.path(datadir, "akr8700.csv"), nrow = 15400)
+        cl <- sapply(d, class)
+        cat("length(cl):", length(cl), "\n")
+        cl[cl == "logical"] <- "numeric"
+        cl[intnames] <- "integer"
+        cl[enames] <- "numeric"
+        cl["city"] <- "character"
+        cl["date"] <- "character"
+        cl
+})
+        
+
+######################################################################
+
+dbexp <- new("localDB", dir = "exposure", name = "exposure")
+dbout <- new("localDB", dir = "outcome", name = "outcome")
 
 for(city in cities) {
-    cat(city, "\n")
-    d <- readCity(city)
-    d$date <- as.Date(as.character(d$date), "%Y%m%d")
-    d$dow <- factor(d$dow, labels = c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
-    dd <- subset(d, agecat == 1)
-    ddd <- dd[, vnames]
-    dbInsert(db, city, ddd)
+        cat(city, "\n")
+        infile <- file.path(datadir, paste(city, "8700.csv", sep = ""))
+        d <- read.csv(infile, colClasses = cl, nrow = 15400, comment.char = "")
+        
+        d$date <- as.Date(as.character(d$date), "%Y%m%d")
+        d$dow <- factor(d$dow, labels = c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+        d$agecat <- factor(d$agecat, labels = c("under65", "65to74", "75p"))
+
+        expd <- local({
+                dd <- subset(d, agecat == "under65")
+                dd[, enames]
+        })
+        outd <- d[, onames]
+        dbInsert(dbexp, city, expd)
+        dbInsert(dbout, city, outd)
 }
+
+######################################################################
+## Metadata
+
+datadir <- path.expand("~/data/masterIHAPSS")
+
+agecat <- read.table(file.path(datadir, "agecat.txt"), sep = "|", header = TRUE)
+citycensus <- read.table(file.path(datadir, "citycensus.txt"), sep = "|",
+                         header = TRUE)
+dow <- read.table(file.path(datadir, "dow.txt"), sep = "|", header = TRUE)
+cities <- read.table(file.path(datadir, "cities.txt"), sep = "|", header = TRUE)
+counties <- read.table(file.path(datadir, "counties.txt"), sep = "|", header = TRUE)
+latlong <- read.table(file.path(datadir, "latlong.txt"), sep = "|", header = TRUE)
+regions <- read.table(file.path(datadir, "regions.txt"), sep = "|", header = TRUE)
+variables <- read.table(file.path(datadir, "variables.txt"), sep = "|",
+                        header = TRUE)
+
+meta <- new("localDB", dir = "Meta", name = "Meta")
+mnames <- c("agecat", "citycensus", "dow", "cities", "counties", "latlong",
+            "regions", "variables")
+
+for(mname in mnames) {
+        dbInsert(meta, mname, get(mname))
+}
+
+dbInsert(meta, "siteList", cities)

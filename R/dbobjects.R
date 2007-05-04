@@ -1,4 +1,4 @@
-baseurl <- "http://www.ihapss.jhsph.edu/NMMAPS/v0.2"
+baseurl <- "http://www.ihapss.jhsph.edu/NMMAPS/v0.3"
 
 initDB <- function(basedir = "NMMAPS") {
     if(!file.exists(basedir))
