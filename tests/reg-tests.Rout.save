@@ -17,9 +17,10 @@ Type 'q()' to quit R.
 
 > library(NMMAPSlite)
 Loading required package: stashR
+Loading required package: filehash
 Simple key-value database (1.0 2007-04-27)
-A Set of Tools for Administering SHared Repositories (0.3 2007-04-27)
-NMMAPS Data Lite (0.3 2007-05-04)
+A Set of Tools for Administering SHared Repositories (0.3-1 2007-05-14)
+NMMAPS Data Lite (0.3-1 2007-06-18)
 Initialize database using 'initDB'
 > 
 > initDB("NMMAPS")
