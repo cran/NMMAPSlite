@@ -10,11 +10,12 @@
 
 .onAttach <- function(lib, pkg) {
         dcf <- read.dcf(file.path(lib, pkg, "DESCRIPTION"))
-        msg <- gettextf("%s (%s %s)", dcf[, "Title"],
-                        as.character(dcf[, "Version"]), dcf[, "Date"])
-        message(paste(strwrap(msg), collapse = "\n"))
-        message(paste(strwrap(gettext("Initialize database using 'initDB'")),
-                      collapse = "\n"))
+        msg1 <- gettextf("%s (%s %s)", dcf[, "Title"],
+			 as.character(dcf[, "Version"]), dcf[, "Date"])
+        packageStartupMessage(paste(strwrap(msg1), collapse = "\n"))
+
+	msg2 <- gettext("Initialize database using 'initDB'")
+        packageStartupMessage(paste(strwrap(msg2), collapse = "\n"))
 }
 
 .dbEnv <- new.env()
