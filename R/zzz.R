@@ -1,10 +1,4 @@
 .onLoad <- function(lib, pkg) {
-        pkgs <- c("stashR")
-
-        for(pkg in pkgs) {
-                if(!require(pkg, quietly = TRUE, character.only = TRUE))
-                        stop(gettextf("'%s' package required", pkg))
-        }
         stashROption("quietDownload", TRUE)
 }
 

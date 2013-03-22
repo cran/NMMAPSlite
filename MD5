@@ -1,0 +1,13 @@
+260d441052fc876641b10f6bcf8b39a8 *DESCRIPTION
+89b43dadff1cbc4ea7d0a3eb5cc6a65d *NAMESPACE
+0a5a3b4221b18c50d8c34ca439b87177 *R/dbobjects.R
+8a7fa19eed0bbda68a7336d3d3e559ee *R/zzz.R
+938fa6b100e9232d4f981fcb3c3efa56 *inst/CITATION
+bf4cc50dff5dc9e881da3f313d71ef57 *inst/COPYING
+a2b2849b6e1472df041c332142001290 *inst/code/NMMAPSdata2lite.R
+0a00631f5a8c11dabfb18e71eab6b418 *inst/doc/PollutantProcess.pdf
+0bbb3aa147593286edfeb7aeec0956fb *man/NMMAPS.Rd
+98f33e08979cc5357b4f182453312a0e *man/initDBObjects.Rd
+85df1ac81c757208d724db327f6d30dc *man/readCity.Rd
+cd80bf6594efb40090217468b94bc076 *man/utils.Rd
+216c682bf4c5a0cce20d4b1e9ec8df9d *man/variableDesc.Rd
